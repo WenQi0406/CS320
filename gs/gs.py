@@ -115,7 +115,9 @@ Ran in: 0.00031 secs
 
 
     #ret is makesure the result print in right way, after run.
+
     ret = pprint.pformat(outlis, indent=1, width=100, compact=True).replace('(', '[').replace(')', ']').replace('\'','"')
+
     try:
         json.loads(ret)
     except ValueError:
@@ -125,7 +127,9 @@ Ran in: 0.00031 secs
 
     print("stable matching is:", ret)
 
+
     with open("my_output_small.json", mode='w') as f:
+
         json.dump(outlis, f)
 
     end_time = time.process_time()
