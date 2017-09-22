@@ -12,7 +12,7 @@ if __name__ == "__main__":
     mangroup
     man
     manprefer
-    womangroup
+    womangroup 
     woman
     womanprefer
     out
@@ -46,44 +46,40 @@ data[0] also be changed:
  [{'a0': ['b1'], 'a1': ['b1', 'b0']}, {'b0': ['a0', 'a1'], 'b1': ['a1', 'a0']}]
 Ran in: 0.00031 secs
     '''
-
+    outlis=[]
     with open("small_prob_input.json") as f:
         data=json.load(f)
     datalen=len(data)
-    subdatalen=[]
-    for i in range(datalen):
-        subdatalen.append(len(data[i]))
-    #get size, data[0] has two list and data[1] has two list
+    i = 0
+    while(i < (datalen)):
 
-    print('datalen is:',datalen,'\n    ---means we have # stable matching table')
-    print('        ---',data)
-    print('subdatalen is',subdatalen,'\n    ---should alway be 2')
-    print('        ---',data[0])
+        print('datalen is:',datalen,'\n    ---means we have # stable matching table')
+        print('        ---',data)
     #we got data is the information which is a list[][]
     #we got length of data is datalen and length of data[group] is subdatalen
     #then I believe i can get each element in data
     #we image a is man b is woman
-    mangroup=data[0][0]
-    print('mangroup is:\n',mangroup)
-    man=list(mangroup.keys())
-    print('we have mans:\n',man)
-    manprefer=mangroup[man[0]]
-    print('manprefer is:\n',manprefer) #mangroup[man[1]][0]
+        mangroup=data[i][0]
+        print('mangroup is:\n',mangroup)
+        man=list(mangroup.keys())
+        print('we have mans:\n',man)
+        manprefer=mangroup[man[0]]
+        print('manprefer is:\n',manprefer) #mangroup[man[1]][0]
 
 
-    womangroup=data[0][1]
-    print('womangroup is:\n',womangroup)
-    woman=list(womangroup.keys())
-    print('we have woman:\n',woman)
-    womanprefer=womangroup[woman[0]]
-    print('womanprefer is:\n',womanprefer)
+        womangroup=data[i][1]
+        print('womangroup is:\n',womangroup)
+        woman=list(womangroup.keys())
+        print('we have woman:\n',woman)
+        womanprefer=womangroup[woman[0]]
+        print('womanprefer is:\n',womanprefer)
 
     # creat a new dict and named it 'out'
-    out = {}
+        out = {}
     #out[man[0]] = manprefer[0]
     #if manprefer[0] in out.values():  # check the value in the out or not
     #    out.pop(man[0])
-    print("new dict is:\n", out)
+        print("new dict is:\n", out)
     #we can begin GS
     #---man is a list which include the key
     #---manprefer is the prefer list of man, which also a list
@@ -103,26 +99,36 @@ Ran in: 0.00031 secs
 
 
     #womanpeer is current man to the woman
-    while (len(man) !=0):
-        mangs=man[0]
-        womangs=mangroup[man[0]][0]
-        mangroup[man[0]].remove(womangs)
-        man.remove(mangs)
-        if(womangs in out.values()):
-            womanpeer=list(out.keys())[list(out.values()).index(womangs)]
-            womanlis=womangroup[womangs]
-            if(womanlis.index(womanpeer) > womanlis.index(mangs)):
-                out.pop(womanpeer)
-                out[mangs]=womangs
-                man.append(womanpeer)
+        while (len(man) !=0):
+            mangs=man[0]
+            womangs=mangroup[man[0]][0]
+            mangroup[man[0]].remove(womangs)
+            man.remove(mangs)
+            if(womangs in out.values()):
+                womanpeer=list(out.keys())[list(out.values()).index(womangs)]
+                womanlis=womangroup[womangs]
+                if(womanlis.index(womanpeer) > womanlis.index(mangs)):
+                    out.pop(womanpeer)
+                    out[mangs]=womangs
+                    man.append(womanpeer)
+                else:
+                    man.append(mangs)
             else:
-                man.append(mangs)
-        else:
-            out[mangs]=womangs
+                out[mangs]=womangs
 
-    print("stable matching is:",out)
+
+        outlis.append(out)
+
+
+        #name = "samll_prob_out" if 'samll_prob_out'.endswith('.json') else  'samll_prob_out'+ '.json'
+
+
+        i = i+1
+
+    print("stable matching is:", outlis)
+
+    with open("samll_prob_out.json", mode='w') as f:
+        json.dump(outlis, f)
+
     end_time = time.process_time()
     print("Ran in: {:.5f} secs".format(end_time - start_time))
-
-    with open("samll_prob_out", mode='w') as f:
-        json.dump(out, f)
