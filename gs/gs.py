@@ -1,4 +1,5 @@
 import json
+import pprint
 
 
 
@@ -6,24 +7,23 @@ if __name__ == "__main__":
     import time
     start_time = time.process_time()
     '''
+    some params we created:
+    
     data
     datalen
-    subdatalen
     mangroup
     man
     manprefer
-    womangroup
+    womangroup 
     woman
     womanprefer
     out
     
-    /Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6 /Volumes/共享/cs320/gs/gs.py
+explan of params:
+
 datalen is: 2 
-    ---means we have # stable matching table
-        --- [[{'a0': ['b0', 'b1'], 'a1': ['b1', 'b0']}, {'b0': ['a0', 'a1'], 'b1': ['a1', 'a0']}], [{'j0': ['k2', 'k1', 'k0'], 'j1': ['k2', 'k1', 'k0'], 'j2': ['k0', 'k2', 'k1']}, {'k0': ['j1', 'j0', 'j2'], 'k1': ['j0', 'j2', 'j1'], 'k2': ['j2', 'j1', 'j0']}]]
-subdatalen is [2, 2] 
-    ---should alway be 2
-        --- [{'a0': ['b0', 'b1'], 'a1': ['b1', 'b0']}, {'b0': ['a0', 'a1'], 'b1': ['a1', 'a0']}]
+---means we have # stable matching table
+
 mangroup is:
  {'a0': ['b0', 'b1'], 'a1': ['b1', 'b0']}
 we have mans:
@@ -36,7 +36,7 @@ we have woman:
  ['b0', 'b1']
 womanprefer is:
  ['a0', 'a1']
-new dict is:
+new dict named out is:
  {}
 woman_gs is:
  b0
@@ -46,80 +46,87 @@ data[0] also be changed:
  [{'a0': ['b1'], 'a1': ['b1', 'b0']}, {'b0': ['a0', 'a1'], 'b1': ['a1', 'a0']}]
 Ran in: 0.00031 secs
     '''
-
-    with open("big_prob_input.json") as f:
+    #use while loop, put data[i]'s dict in the outlis, the length of outlis is length of data
+    outlis=[]
+    with open("small_prob_input.json") as f:
         data=json.load(f)
     datalen=len(data)
-    subdatalen=[]
-    for i in range(datalen):
-        subdatalen.append(len(data[i]))
-    #get size, data[0] has two list and data[1] has two list
+    i = 0
 
-    print('datalen is:',datalen,'\n    ---means we have # stable matching table')
-    print('        ---',data)
-    print('subdatalen is',subdatalen,'\n    ---should alway be 2')
-    print('        ---',data[0])
-    #we got data is the information which is a list[][]
-    #we got length of data is datalen and length of data[group] is subdatalen
-    #then I believe i can get each element in data
-    #we image a is man b is woman
-    mangroup=data[0][0]
-    print('mangroup is:\n',mangroup)
-    man=list(mangroup.keys())
-    print('we have mans:\n',man)
-    manprefer=mangroup[man[0]]
-    print('manprefer is:\n',manprefer) #mangroup[man[1]][0]
+    #data include datalen information need to be matched, so use while loop to match them one by one
+    while(i < (datalen)):
+        mangroup=data[i][0]
+        man=list(mangroup.keys())
+        manprefer=mangroup[man[0]]
 
-
-    womangroup=data[0][1]
-    print('womangroup is:\n',womangroup)
-    woman=list(womangroup.keys())
-    print('we have woman:\n',woman)
-    womanprefer=womangroup[woman[0]]
-    print('womanprefer is:\n',womanprefer)
+        womangroup=data[i][1]
+        woman=list(womangroup.keys())
+        womanprefer=womangroup[woman[0]]
 
     # creat a new dict and named it 'out'
-    out = {}
-    #out[man[0]] = manprefer[0]
-    #if manprefer[0] in out.values():  # check the value in the out or not
-    #    out.pop(man[0])
-    print("new dict is:\n", out)
+        out = {}
     #we can begin GS
-    #---man is a list which include the key
-    #---manprefer is the prefer list of man, which also a list
-
-    #we can use basic case that man list goes to null and woman list goes to null
-    #if not basic case, we put man and woman in the out dict as key and value. then use .remove() to remove.
-    #use for loop or while loop? if use while, I belive is better
-    #while(man==null && woman==null) out dict is finished.
-    #precode is the question on the inclass work sheet
-
-    #while(len(man) != 0):
-    #woman_gs=mangroup[man[0]][0]
-    #print('woman_gs is:\n',woman_gs)
-    #mangroup[man[0]].remove(woman_gs)
-    #print('manprefer list after mangroup[man[0]].remove(woman_gs) is:\n',manprefer)
-    #print('data[0] also be changed:\n',data[0])
-
-
-    #womanpeer is current man to the woman
-    while (len(man) !=0):
-        mangs=man[0]
-        womangs=mangroup[man[0]][0]
-        mangroup[man[0]].remove(womangs)
-        man.remove(mangs)
-        if(womangs in out.values()):
-            womanpeer=list(out.keys())[list(out.values()).index(womangs)]
-            womanlis=womangroup[womangs]
-            if(womanlis.index(womanpeer) > womanlis.index(mangs)):
-                out.pop(womanpeer)
-                out[mangs]=womangs
-                man.append(womanpeer)
+        """
+        we check len(man) and know is there still a man is free
+        if it is
+        pick that man as mangs, and take the man 1'st prefer woman as womangs
+        
+        then we pop the mangs from man(list)
+        and pop the womangs form that man preferlist (avoid the man ask again)
+        we can dict named out
+        if womangs in out as a value, it means womangs in engaged current
+        then 
+        we let womanpeer be the womangs's current peer
+        and check the index of mangs and womanpeer in womangs's prefer list
+        if mangs is above
+        womanpeer becomes free, mangs and womangs are engaged, put them in out dict
+        other cause
+        we put mangs at the back of the man list, and wait for ask next new woman again
+        
+        if the womangs is not in the out dict, which means the womangs is free current
+        we can put mangs and womangs in the out dict directly
+        """
+        while (len(man) !=0):
+            mangs=man[0]
+            womangs=mangroup[man[0]][0]
+            mangroup[man[0]].remove(womangs)
+            man.remove(mangs)
+            if(womangs in out.values()):
+                # womanpeer is current man to the woman
+                womanpeer=list(out.keys())[list(out.values()).index(womangs)]
+                womanlis=womangroup[womangs]
+                if(womanlis.index(womanpeer) > womanlis.index(mangs)):
+                    out.pop(womanpeer)
+                    out[mangs]=womangs
+                    man.append(womanpeer)
+                else:
+                    man.append(mangs)
             else:
-                man.append(mangs)
-        else:
-            out[mangs]=womangs
+                out[mangs]=womangs
 
-    print("stable matching is:",out)
+
+        outlis.append(out)
+
+
+        #name = "samll_prob_out" if 'samll_prob_out'.endswith('.json') else  'samll_prob_out'+ '.json'
+
+
+        i = i+1
+
+
+    #ret is makesure the result print in right way, after run.
+    ret = pprint.pformat(outlis, indent=1, width=100, compact=True).replace('(', '[').replace(')', ']').replace('\'','"')
+    try:
+        json.loads(ret)
+    except ValueError:
+        print("Tried to encode as: " + ret)
+        raise
+
+
+    print("stable matching is:", ret)
+
+    with open("my_output_small.json", mode='w') as f:
+        json.dump(outlis, f)
+
     end_time = time.process_time()
     print("Ran in: {:.5f} secs".format(end_time - start_time))
