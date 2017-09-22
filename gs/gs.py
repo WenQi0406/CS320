@@ -125,7 +125,7 @@ Ran in: 0.00031 secs
         raise
 
 
-    print("stable matching is:", ret)
+    print("stable matching is:", outlis)
 
     print('I am Wen')
     with open("my_output_small.json", mode='w') as f:
@@ -134,3 +134,6 @@ Ran in: 0.00031 secs
 
     end_time = time.process_time()
     print("Ran in: {:.5f} secs".format(end_time - start_time))
+
+
+    print(man)
