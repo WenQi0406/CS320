@@ -127,7 +127,7 @@ Ran in: 0.00031 secs
 
     print("stable matching is:", ret)
 
-
+    print('I am Wen')
     with open("my_output_small.json", mode='w') as f:
 
         json.dump(outlis, f)
