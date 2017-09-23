@@ -48,7 +48,7 @@ Ran in: 0.00031 secs
     '''
     #use while loop, put data[i]'s dict in the outlis, the length of outlis is length of data
     outlis=[]
-    with open("small_prob_input.json") as f:
+    with open("big_prob_input.json") as f:
         data=json.load(f)
     datalen=len(data)
     i = 0
@@ -125,10 +125,9 @@ Ran in: 0.00031 secs
         raise
 
 
-    print("stable matching is:", outlis)
+    print(outlis)
 
-    print('I am Wen')
-    with open("my_output_small.json", mode='w') as f:
+    with open("my_output_big.txt", mode='w') as f:
 
         json.dump(outlis, f)
 
@@ -136,4 +135,3 @@ Ran in: 0.00031 secs
     print("Ran in: {:.5f} secs".format(end_time - start_time))
 
 
-    print(man)
