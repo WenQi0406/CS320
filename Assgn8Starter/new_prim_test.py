@@ -9,8 +9,12 @@ def initialize_disjiont_set(items):
     return re
 
 def write_tree_edges_to_file(edges, filename):
-    # TODO write out the edges, one per line. The same format as produced by generate_mst_input
-    pass
+    with open(filename, mode='w') as f:
+        total=0
+        for v1, v2, w in edges:
+            f.write("{} {} {}\n".format(v1, v2, w))
+            total=total + int(w)
+        f.write("total=%d\n"%total)
 
 
 # Do not change this function's name or the arguments it takes. Also, do not change
@@ -33,7 +37,7 @@ if __name__ == '__main__':
 
     start_time = time.process_time()
     g = Graph()
-    with open("5000 input") as f:
+    with open("5 input") as f:
         for line in f:
             try:
                 v1, v2, w = line.split()
@@ -41,25 +45,26 @@ if __name__ == '__main__':
             except:
                 pass
     node_dist=initialize_disjiont_set(g.get_nodes())
-    first_node=list(g.get_nodes())[0]
-    node_sets = set([first_node])
+    print(g.get_nodes())
+    print(node_dist) # O(n)
+    first_node=list(g.get_nodes())[0] #O(1)
+    node_sets = set([first_node]) #O(1)
 
 
     tree_edges = []
-
-    for node in g.neighbors(first_node):
+    print(g.neighbors(first_node))
+    for node in g.neighbors(first_node): # O(n)
         if node_dist[node][0] == -1 or g.attributes_of(first_node,node).get('weight')<node_dist[node][0]:
             node_dist[node]=(g.attributes_of(first_node,node)["weight"],first_node)
 
-    for i in range(len(g.get_nodes())-1):
+    for i in range(len(g.get_nodes())-1):# O(n)
         min_node=None
-        for node in g.get_nodes():
-            if node not in node_sets and node_dist[node][0] != -1 \
-                    and (min_node == None or node_dist[node][0] < node_dist[min_node][0]):
+        for node in g.get_nodes():#O(n)
+            if node not in node_sets and node_dist[node][0] != -1 and (min_node == None or node_dist[node][0] < node_dist[min_node][0]):
                 min_node=node
         node_sets.add(min_node)
         tree_edges.append((node_dist[min_node][1],min_node,node_dist[min_node][0]))
-        for node in g.neighbors(min_node):
+        for node in g.neighbors(min_node):# O(n)
             if node_dist[node][0] == -1 or g.attributes_of(min_node, node)['weight'] < node_dist[node][0]:
                 node_dist[node] = (g.attributes_of(min_node, node)["weight"], min_node)
     print(tree_edges)
@@ -71,3 +76,5 @@ if __name__ == '__main__':
 
     end_time = time.process_time()
     print("Ran in: {:.5f} secs".format(end_time - start_time))
+
+    write_tree_edges_to_file(tree_edges,"5.mst")
